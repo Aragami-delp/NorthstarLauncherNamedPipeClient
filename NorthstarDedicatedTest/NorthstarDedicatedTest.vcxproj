@@ -105,6 +105,10 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>cd $(TargetDir)
+copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />

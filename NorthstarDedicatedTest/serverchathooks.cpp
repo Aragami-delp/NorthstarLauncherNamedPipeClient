@@ -177,7 +177,7 @@ SQRESULT SQ_SendToWebsocket(void* sqvm)
 	bool someBool = ServerSq_getbool(sqvm, 3);
 
 	// ChatSendMessage(someInteger, someText, someBool);
-	printf("[*] SendWebhookMessage %d %s %d", 99, "Text", 1);
+	printf("[*] SendWebhookMessage %d %s %s", someInteger, someText, someBool ? "true" : "false"); 
 
 	return SQRESULT_NULL;
 }
