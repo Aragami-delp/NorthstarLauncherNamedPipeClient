@@ -1506,6 +1506,9 @@
     <ClInclude Include="clientruihooks.h">
       <Filter>Header Files\Client</Filter>
     </ClInclude>
+    <ClInclude Include="serverwebsocket.h">
+      <Filter>Header Files\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -1669,6 +1672,9 @@
     </ClCompile>
     <ClCompile Include="clientruihooks.cpp">
       <Filter>Source Files\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="serverwebsocket.cpp">
+      <Filter>Source Files\Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

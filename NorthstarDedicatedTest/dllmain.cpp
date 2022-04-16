@@ -34,6 +34,7 @@
 #include "buildainfile.h"
 #include "configurables.h"
 #include "serverchathooks.h"
+#include "serverwebsocket.h"
 #include "clientchathooks.h"
 #include "localchatwriter.h"
 #include "scriptservertoclientstringcommand.h"
@@ -270,6 +271,9 @@ bool InitialiseNorthstar()
 
 	AddDllLoadCallback("engine.dll", InitialiseServerChatHooks_Engine);
 	AddDllLoadCallback("server.dll", InitialiseServerChatHooks_Server);
+
+	// websocket - i don't need the dll, but the callback
+	AddDllLoadCallback("server.dll", InitialiseServerWebSocket_Server);
 
 	// maxplayers increase
 	AddDllLoadCallback("engine.dll", InitialiseMaxPlayersOverride_Engine);
