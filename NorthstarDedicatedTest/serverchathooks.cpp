@@ -170,6 +170,18 @@ SQRESULT SQ_BroadcastMessage(void* sqvm)
 	return SQRESULT_NULL;
 }
 
+SQRESULT SQ_SendToWebsocket(void* sqvm)
+{
+	int someInteger = ServerSq_getinteger(sqvm, 1);
+	const char* someText = ServerSq_getstring(sqvm, 2);
+	bool someBool = ServerSq_getbool(sqvm, 3);
+
+	// ChatSendMessage(someInteger, someText, someBool);
+	printf("[*] SendWebhookMessage %d %s %d", 99, "Text", 1);
+
+	return SQRESULT_NULL;
+}
+
 void InitialiseServerChatHooks_Engine(HMODULE baseAddress)
 {
 	g_pServerGameDLL = (CServerGameDLL*)((char*)baseAddress + 0x13F0AA98);
@@ -206,4 +218,6 @@ void InitialiseServerChatHooks_Server(HMODULE baseAddress)
 		"int fromPlayerIndex, int toPlayerIndex, string text, bool isTeam, bool isDead, int messageType",
 		"",
 		SQ_BroadcastMessage);
+	g_ServerSquirrelManager->AddFuncRegistration(
+		"void", "NSSendToWebsocket", "int someInteger, string someText, bool someBool", "", SQ_SendToWebsocket);
 }
