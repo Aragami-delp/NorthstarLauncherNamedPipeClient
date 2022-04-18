@@ -3,6 +3,9 @@
 #include "squirrel.h" // Squirrel
 #include "miscserverscript.h" // GetPlayerByIndex
 
+#include <boost/beast/core.hpp>
+#define PORT 8080
+
 class ServerDings; // TODO: ServerDings
 
 void SendWebSocketMessage() {
