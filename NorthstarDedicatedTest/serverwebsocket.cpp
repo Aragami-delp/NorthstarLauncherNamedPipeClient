@@ -4,6 +4,17 @@
 #include "miscserverscript.h" // GetPlayerByIndex
 
 #include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
+#include <boost/asio/dispatch.hpp>
+#include <boost/asio/strand.hpp>
+#include <algorithm>
+#include <cstdlib>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
+#include <vector>
 #define PORT 8080
 
 class ServerDings; // TODO: ServerDings
