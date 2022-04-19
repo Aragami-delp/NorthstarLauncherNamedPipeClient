@@ -252,15 +252,12 @@ struct lws_plat_file_ops;
 struct lws_ss_policy;
 struct lws_ss_plugin;
 struct lws_metric_policy;
-struct lws_sss_ops;
 
 typedef int (*lws_context_ready_cb_t)(struct lws_context *context);
 
-#if defined(LWS_WITH_NETWORK)
 typedef int (*lws_peer_limits_notify_t)(struct lws_context *ctx,
 					lws_sockfd_type sockfd,
 					lws_sockaddr46 *sa46);
-#endif
 
 /** struct lws_context_creation_info - parameters to create context and /or vhost with
  *
@@ -798,17 +795,6 @@ struct lws_context_creation_info {
 	 * the socket path given in ss_proxy_bind (start it with a + or +@);
 	 * nonzero means connect via a tcp socket to the tcp address in
 	 * ss_proxy_bind and the given port */
-	const struct lws_transport_proxy_ops *txp_ops_ssproxy; /**< CONTEXT: NULL, or
-	 * custom sss transport ops used for ss proxy communication.  NULL means
-	 * to use the default wsi-based proxy server */
-	const void *txp_ssproxy_info; /**< CONTEXT: NULL, or extra transport-
-	 * specifi creation info to be used at \p txp_ops_ssproxy creation */
-	const struct lws_transport_client_ops *txp_ops_sspc; /**< CONTEXT: NULL, or
-	 * custom sss transport ops used for ss client communication to the ss
-	 * proxy.  NULL means to use the default wsi-based client support */
-#endif
-
-#if defined(LWS_WITH_SECURE_STREAMS_PROXY_API)
 #endif
 
 	int rlimit_nofile;
@@ -925,15 +911,6 @@ struct lws_context_creation_info {
 	size_t					http_nsc_heap_max_payload;
 	/**< CONTEXT: 0, or the maximum size of a single cookie we are able to
 	 * handle */
-#endif
-
-#if defined(LWS_WITH_SYS_ASYNC_DNS)
-	const char				**async_dns_servers;
-	/**< CONTEXT: NULL, or a pointer to an array of strings containing the
-	 * numeric IP like "8.8.8.8" or "2001:4860:4860::8888" for a list of DNS
-	 * server to forcibly add.  If given, the list of strings must be
-	 * terminated with a NULL.
-	 */
 #endif
 
 	/* Add new things just above here ---^
@@ -1192,6 +1169,30 @@ LWS_VISIBLE LWS_EXTERN const char *
 lws_get_vhost_iface(struct lws_vhost *vhost);
 
 /**
+ * lws_json_dump_vhost() - describe vhost state and stats in JSON
+ *
+ * \param vh: the vhost
+ * \param buf: buffer to fill with JSON
+ * \param len: max length of buf
+ */
+LWS_VISIBLE LWS_EXTERN int
+lws_json_dump_vhost(const struct lws_vhost *vh, char *buf, int len);
+
+/**
+ * lws_json_dump_context() - describe context state and stats in JSON
+ *
+ * \param context: the context
+ * \param buf: buffer to fill with JSON
+ * \param len: max length of buf
+ * \param hide_vhosts: nonzero to not provide per-vhost mount etc information
+ *
+ * Generates a JSON description of vhost state into buf
+ */
+LWS_VISIBLE LWS_EXTERN int
+lws_json_dump_context(const struct lws_context *context, char *buf, int len,
+		      int hide_vhosts);
+
+/**
  * lws_vhost_user() - get the user data associated with the vhost
  * \param vhost: Websocket vhost
  *
@@ -1216,19 +1217,6 @@ lws_context_user(struct lws_context *context);
 
 LWS_VISIBLE LWS_EXTERN const char *
 lws_vh_tag(struct lws_vhost *vh);
-
-LWS_VISIBLE LWS_EXTERN void
-_lws_context_info_defaults(struct lws_context_creation_info *info,
-			   const char *sspol);
-
-LWS_VISIBLE LWS_EXTERN void
-lws_default_loop_exit(struct lws_context *cx);
-
-LWS_VISIBLE LWS_EXTERN void
-lws_context_default_loop_run_destroy(struct lws_context *cx);
-
-LWS_VISIBLE LWS_EXTERN int
-lws_cmdline_passfail(int argc, const char **argv, int actual);
 
 /**
  * lws_context_is_being_destroyed() - find out if context is being destroyed
@@ -1328,7 +1316,6 @@ struct lws_http_mount {
 	unsigned int cache_reusable:1; /**< set if client cache may reuse this */
 	unsigned int cache_revalidate:1; /**< set if client cache should revalidate on use */
 	unsigned int cache_intermediaries:1; /**< set if intermediaries are allowed to cache */
-	unsigned int cache_no:1; /**< set if client should check cache always*/
 
 	unsigned char origin_protocol; /**< one of enum lws_mount_protocols */
 	unsigned char mountpoint_len; /**< length of mountpoint string */

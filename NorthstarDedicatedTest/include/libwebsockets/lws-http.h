@@ -350,7 +350,6 @@ enum lws_token_indexes {
 	_WSI_TOKEN_CLIENT_ORIGIN,
 	_WSI_TOKEN_CLIENT_METHOD,
 	_WSI_TOKEN_CLIENT_IFACE,
-	_WSI_TOKEN_CLIENT_LOCALPORT,
 	_WSI_TOKEN_CLIENT_ALPN,
 
 	/* always last real token index*/
@@ -535,6 +534,8 @@ lws_hdr_custom_name_foreach(struct lws *wsi, lws_hdr_custom_fe_cb_t cb, void *op
  *
  * Use this in place of lws_get_urlarg_by_name() that does not return an
  * explicit length.
+ *
+ * Use lws_get_urlarg_by_name_safe() instead of this, which returns the length.
  */
 LWS_VISIBLE LWS_EXTERN int
 lws_get_urlarg_by_name_safe(struct lws *wsi, const char *name, char *buf, int len);
@@ -865,7 +866,7 @@ lws_http_redirect(struct lws *wsi, int code, const unsigned char *loc, int len,
  * lws_http_transaction_completed() - wait for new http transaction or close
  * \param wsi:	websocket connection
  *
- *	Returns nonzero if the HTTP connection must close now
+ *	Returns 1 if the HTTP connection must close now
  *	Returns 0 and resets connection to wait for new HTTP header /
  *	  transaction if possible
  */

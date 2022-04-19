@@ -93,8 +93,7 @@ struct lws_genhmac_ctx {
  *
  * \param type:	one of LWS_GENHASH_TYPE_...
  *
- * Returns number of bytes in this type of hash, if the hash type is unknown, it
- * will return 0.
+ * Returns number of bytes in this type of hash
  */
 LWS_VISIBLE LWS_EXTERN size_t LWS_WARN_UNUSED_RESULT
 lws_genhash_size(enum lws_genhash_types type);
@@ -103,8 +102,7 @@ lws_genhash_size(enum lws_genhash_types type);
  *
  * \param type:	one of LWS_GENHASH_TYPE_...
  *
- * Returns number of bytes in this type of hmac, if the hmac type is unknown, it
- * will return 0.
+ * Returns number of bytes in this type of hmac
  */
 LWS_VISIBLE LWS_EXTERN size_t LWS_WARN_UNUSED_RESULT
 lws_genhmac_size(enum lws_genhmac_types type);

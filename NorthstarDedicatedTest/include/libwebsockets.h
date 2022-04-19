@@ -36,16 +36,10 @@ extern "C" {
 #include <stdarg.h>
 #endif
 
-#include "lws_config.h"
-
-#if defined(LWS_HAVE_SYS_TYPES_H) && !defined(LWS_PLAT_BAREMETAL)
-#include <sys/types.h>
-#endif
-
-#include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 
+#include "lws_config.h"
 
 #if defined(LWS_SUPPRESS_DEPRECATED_API_WARNINGS)
 #define OPENSSL_USE_DEPRECATED
@@ -54,6 +48,7 @@ extern "C" {
 /* place for one-shot opaque forward references */
 
 typedef struct lws_context * lws_ctx_t;
+struct lws_sequencer;
 struct lws_dsh;
 
 /*
@@ -72,8 +67,6 @@ struct lws_dsh;
 #define LWS_PI ((uint64_t)LWS_TI * 1024)
 
 #define LWS_US_TO_MS(x) ((x + (LWS_US_PER_MS / 2)) / LWS_US_PER_MS)
-
-#define LWS_FOURCC(a, b, c, d) ((a << 24) | (b << 16) | (c << 8) | d)
 
 #if defined(LWS_HAS_INTPTR_T)
 #include <stdint.h>
@@ -145,7 +138,6 @@ typedef int suseconds_t;
 
 #else /* NOT WIN32 */
 #include <unistd.h>
-
 #if defined(LWS_HAVE_SYS_CAPABILITY_H) && defined(LWS_HAVE_LIBCAP)
 #include <sys/capability.h>
 #endif
@@ -161,7 +153,7 @@ typedef int suseconds_t;
 #define LWS_O_CREAT O_CREAT
 #define LWS_O_TRUNC O_TRUNC
 
-#if !defined(LWS_PLAT_OPTEE) && !defined(OPTEE_TA) && !defined(LWS_PLAT_FREERTOS) && !defined(LWS_PLAT_BAREMETAL)
+#if !defined(LWS_PLAT_OPTEE) && !defined(OPTEE_TA) && !defined(LWS_PLAT_FREERTOS)
 #include <poll.h>
 #include <netdb.h>
 #define LWS_INVALID_FILE -1
@@ -210,7 +202,6 @@ typedef int suseconds_t;
 #endif /* not shared */
 
 #define LWS_WARN_DEPRECATED __attribute__ ((deprecated))
-#undef printf
 #define LWS_FORMAT(string_index) __attribute__ ((format(printf, string_index, string_index+1)))
 #else /* not GNUC */
 
@@ -296,16 +287,9 @@ typedef int suseconds_t;
 #include <mbedtls/ssl.h>
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
-#include <mbedtls/version.h>
 
 #if !defined(MBEDTLS_PRIVATE)
 #define MBEDTLS_PRIVATE(_q) _q
-#endif
-
-#if (MBEDTLS_VERSION_MAJOR == 3) && (MBEDTLS_VERSION_MINOR == 0)
-#define MBEDTLS_PRIVATE_V30_ONLY(_q) MBEDTLS_PRIVATE(_q)
-#else
-#define MBEDTLS_PRIVATE_V30_ONLY(_q) _q
 #endif
 
 #endif
@@ -395,18 +379,11 @@ struct lws;
 /* File operations stuff exists */
 #define LWS_FEATURE_FOPS
 
-/* Mounts have extra no_cache member */
-#define LWS_FEATURE_MOUNT_NO_CACHE
-
 
 #if defined(_WIN32)
 #if !defined(LWS_WIN32_HANDLE_TYPES)
 typedef SOCKET lws_sockfd_type;
-#if defined(__MINGW32__)
-typedef int lws_filefd_type;
-#else
 typedef HANDLE lws_filefd_type;
-#endif
 #endif
 
 
@@ -585,25 +562,6 @@ struct lws_pollargs {
 	int prev_events;	/**< the previous event mask */
 };
 
-#if !defined(LWS_SIZEOFPTR)
-#define LWS_SIZEOFPTR ((int)sizeof (void *))
-#endif
-
-#if defined(__x86_64__)
-#define _LWS_PAD_SIZE 16	/* Intel recommended for best performance */
-#else
-#define _LWS_PAD_SIZE LWS_SIZEOFPTR   /* Size of a pointer on the target arch */
-#endif
-#define _LWS_PAD(n) (((n) % _LWS_PAD_SIZE) ? \
-		((n) + (_LWS_PAD_SIZE - ((n) % _LWS_PAD_SIZE))) : (n))
-/* last 2 is for lws-meta */
-#define LWS_PRE _LWS_PAD(4 + 10 + 2)
-/* used prior to 1.7 and retained for backward compatibility */
-#define LWS_SEND_BUFFER_PRE_PADDING LWS_PRE
-#define LWS_SEND_BUFFER_POST_PADDING 0
-
-
-
 struct lws_extension; /* needed even with ws exts disabled for create context */
 struct lws_token_limits;
 struct lws_protocols;
@@ -612,68 +570,10 @@ struct lws_tokens;
 struct lws_vhost;
 struct lws;
 
-/* Generic stateful operation return codes */
-
-typedef enum {
-	LWS_SRET_OK		= 0,
-	LWS_SRET_WANT_INPUT     = (1 << 16),
-	LWS_SRET_WANT_OUTPUT    = (1 << 17),
-	LWS_SRET_FATAL          = (1 << 18),
-	LWS_SRET_NO_FURTHER_IN  = (1 << 19),
-	LWS_SRET_NO_FURTHER_OUT = (1 << 20),
-	LWS_SRET_AWAIT_RETRY    = (1 << 21),
-	LWS_SRET_YIELD          = (1 << 22), /* return to the event loop and continue */
-} lws_stateful_ret_t;
-
-typedef struct lws_fixed3232 {
-	int32_t		whole;	/* signed 32-bit int */
-	int32_t		frac;	/* signed frac proportion from 0 to (100M - 1) */
-} lws_fx_t;
-
-#define LWS_FX_FRACTION_MSD 100000000
-#define lws_neg(a) (a->whole < 0 || a->frac < 0)
-#define lws_fx_set(a, x, y) { a.whole = x; a.frac = x < 0 ? -y : y; }
-#define lws_fix64(a) (((int64_t)a->whole << 32) + \
-		(((1ll << 32) * (a->frac < 0 ? -a->frac : a->frac)) / LWS_FX_FRACTION_MSD))
-#define lws_fix64_abs(a) \
-	((((int64_t)(a->whole < 0 ? (-a->whole) : a->whole) << 32) + \
-			(((1ll << 32) * (a->frac < 0 ? -a->frac : a->frac)) / LWS_FX_FRACTION_MSD)))
-
-#define lws_fix3232(a, a64) { a->whole = (int32_t)(a64 >> 32); \
-			      a->frac = (int32_t)((100000000 * (a64 & 0xffffffff)) >> 32); }
-
-LWS_VISIBLE LWS_EXTERN const lws_fx_t *
-lws_fx_add(lws_fx_t *r, const lws_fx_t *a, const lws_fx_t *b);
-
-LWS_VISIBLE LWS_EXTERN const lws_fx_t *
-lws_fx_sub(lws_fx_t *r, const lws_fx_t *a, const lws_fx_t *b);
-
-LWS_VISIBLE LWS_EXTERN const lws_fx_t *
-lws_fx_mul(lws_fx_t *r, const lws_fx_t *a, const lws_fx_t *b);
-
-LWS_VISIBLE LWS_EXTERN const lws_fx_t *
-lws_fx_div(lws_fx_t *r, const lws_fx_t *a, const lws_fx_t *b);
-
-LWS_VISIBLE LWS_EXTERN const lws_fx_t *
-lws_fx_sqrt(lws_fx_t *r, const lws_fx_t *a);
-
-LWS_VISIBLE LWS_EXTERN int
-lws_fx_comp(const lws_fx_t *a, const lws_fx_t *b);
-
-LWS_VISIBLE LWS_EXTERN int
-lws_fx_roundup(const lws_fx_t *a);
-
-LWS_VISIBLE LWS_EXTERN int
-lws_fx_rounddown(const lws_fx_t *a);
-
-LWS_VISIBLE LWS_EXTERN const char *
-lws_fx_string(const lws_fx_t *a, char *buf, size_t size);
-
 #include <libwebsockets/lws-dll2.h>
 #include <libwebsockets/lws-map.h>
 
 #include <libwebsockets/lws-fault-injection.h>
-#include <libwebsockets/lws-backtrace.h>
 #include <libwebsockets/lws-timeout-timer.h>
 #include <libwebsockets/lws-cache-ttl.h>
 #if defined(LWS_WITH_SYS_SMD)
@@ -681,24 +581,18 @@ lws_fx_string(const lws_fx_t *a, char *buf, size_t size);
 #endif
 #include <libwebsockets/lws-state.h>
 #include <libwebsockets/lws-retry.h>
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-adopt.h>
 #include <libwebsockets/lws-network-helper.h>
 #include <libwebsockets/lws-metrics.h>
-#endif
-
-#include <libwebsockets/lws-ota.h>
 #include <libwebsockets/lws-system.h>
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-ws-close.h>
 #include <libwebsockets/lws-callbacks.h>
 #include <libwebsockets/lws-ws-state.h>
 #include <libwebsockets/lws-ws-ext.h>
 #include <libwebsockets/lws-protocols-plugins.h>
-#endif
+
 #include <libwebsockets/lws-context-vhost.h>
 
-#if defined(LWS_WITH_NETWORK)
 #if defined(LWS_WITH_CONMON)
 #include <libwebsockets/lws-conmon.h>
 #endif
@@ -709,21 +603,16 @@ lws_fx_string(const lws_fx_t *a, char *buf, size_t size);
 #include <libwebsockets/lws-client.h>
 #include <libwebsockets/lws-http.h>
 #include <libwebsockets/lws-spa.h>
-#endif
 #include <libwebsockets/lws-purify.h>
 #include <libwebsockets/lws-misc.h>
 #include <libwebsockets/lws-dsh.h>
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-service.h>
 #include <libwebsockets/lws-write.h>
 #include <libwebsockets/lws-writeable.h>
-#endif
 #include <libwebsockets/lws-ring.h>
 #include <libwebsockets/lws-sha1-base64.h>
 #include <libwebsockets/lws-x509.h>
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-cgi.h>
-#endif
 #if defined(LWS_WITH_FILE_OPS)
 #include <libwebsockets/lws-vfs.h>
 #endif
@@ -738,13 +627,16 @@ lws_fx_string(const lws_fx_t *a, char *buf, size_t size);
 #include <libwebsockets/lws-lwsac.h>
 #include <libwebsockets/lws-fts.h>
 #include <libwebsockets/lws-diskcache.h>
+#include <libwebsockets/lws-sequencer.h>
 #include <libwebsockets/lws-secure-streams.h>
-#include <libwebsockets/lws-secure-streams-serialization.h>
 #include <libwebsockets/lws-secure-streams-policy.h>
 #include <libwebsockets/lws-secure-streams-client.h>
-#include <libwebsockets/lws-secure-streams-transport-proxy.h>
-#include <libwebsockets/lws-jrpc.h>
 
+#if !defined(LWS_PLAT_FREERTOS)
+#include <libwebsockets/abstract/abstract.h>
+
+#include <libwebsockets/lws-test-sequencer.h>
+#endif
 #include <libwebsockets/lws-async-dns.h>
 
 #if defined(LWS_WITH_TLS)
@@ -770,35 +662,20 @@ lws_fx_string(const lws_fx_t *a, char *buf, size_t size);
 
 #endif
 
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-eventlib-exports.h>
-#endif
 #include <libwebsockets/lws-i2c.h>
 #include <libwebsockets/lws-spi.h>
-#if defined(LWS_ESP_PLATFORM)
-#include <libwebsockets/lws-esp32-spi.h>
-#endif
 #include <libwebsockets/lws-gpio.h>
 #include <libwebsockets/lws-bb-i2c.h>
 #include <libwebsockets/lws-bb-spi.h>
 #include <libwebsockets/lws-button.h>
 #include <libwebsockets/lws-led.h>
 #include <libwebsockets/lws-pwm.h>
-#include <libwebsockets/lws-upng.h>
-#include <libwebsockets/lws-jpeg.h>
 #include <libwebsockets/lws-display.h>
-#include <libwebsockets/lws-dlo.h>
 #include <libwebsockets/lws-ssd1306-i2c.h>
 #include <libwebsockets/lws-ili9341-spi.h>
-#include <libwebsockets/lws-spd1656-spi.h>
-#include <libwebsockets/lws-uc8176-spi.h>
-#include <libwebsockets/lws-ssd1675b-spi.h>
 #include <libwebsockets/lws-settings.h>
-#if defined(LWS_WITH_NETWORK)
 #include <libwebsockets/lws-netdev.h>
-#endif
-
-#include <libwebsockets/lws-html.h>
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 /*
  * lws abstract display
  *
- * Copyright (C) 2019 - 2022 Andy Green <andy@warmcat.com>
+ * Copyright (C) 2019 - 2020 Andy Green <andy@warmcat.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -25,65 +25,9 @@
 #if !defined(__LWS_DISPLAY_H__)
 #define __LWS_DISPLAY_H__
 
-typedef int16_t lws_display_list_coord_t;
+#include <stdint.h>
+
 typedef uint16_t lws_display_scalar;
-typedef uint16_t lws_display_rotation_t;
-typedef uint32_t lws_display_colour_t;
-typedef uint16_t lws_display_palette_idx_t;
-
-typedef struct lws_box {
-	lws_fx_t		x;
-	lws_fx_t		y;
-	lws_fx_t		w;
-	lws_fx_t		h;
-} lws_box_t;
-
-struct lws_display_state;
-struct lws_display;
-
-typedef enum {
-	LWSSURF_TRUECOLOR32,
-	LWSSURF_565,
-	LWSSURF_PALETTE,
-	LWSSURF_QUANTIZED_4BPP
-} lws_surface_type_t;
-
-typedef struct lws_surface_info {
-	lws_fx_t			wh_px[2];
-	lws_fx_t			wh_mm[2];
-	const lws_display_colour_t	*palette;
-	size_t				palette_depth;
-	lws_surface_type_t		type;
-	uint8_t				greyscale:1; /* line: 0 = RGBA, 1 = YA */
-	uint8_t				partial:1; /* can handle partial */
-} lws_surface_info_t;
-
-typedef struct lws_greyscale_error {
-	int16_t				rgb[1];
-} lws_greyscale_error_t;
-
-typedef struct lws_colour_error {
-	int16_t				rgb[3];
-} lws_colour_error_t;
-
-typedef union {
-	lws_greyscale_error_t		grey;	/* when ic->greyscale set */
-	lws_colour_error_t		colour; /* when ic->greyscale == 0 */
-} lws_surface_error_t;
-
-LWS_VISIBLE LWS_EXTERN void
-lws_surface_set_px(const lws_surface_info_t *ic, uint8_t *line, int x,
-		   const lws_display_colour_t *c);
-
-LWS_VISIBLE LWS_EXTERN lws_display_palette_idx_t
-lws_display_palettize_grey(const lws_surface_info_t *ic,
-			   const lws_display_colour_t *palette, size_t pdepth,
-			   lws_display_colour_t c, lws_greyscale_error_t *ectx);
-
-LWS_VISIBLE LWS_EXTERN lws_display_palette_idx_t
-lws_display_palettize_col(const lws_surface_info_t *ic,
-			  const lws_display_colour_t *palette, size_t pdepth,
-			  lws_display_colour_t c, lws_colour_error_t *ectx);
 
 /*
  * This is embedded in the actual display implementation object at the top,
@@ -97,30 +41,31 @@ lws_display_palettize_col(const lws_surface_info_t *ic,
  */
 
 typedef struct lws_display {
-	int (*init)(struct lws_display_state *lds);
+	int (*init)(const struct lws_display *disp);
 	const lws_pwm_ops_t		*bl_pwm_ops;
-	int (*contrast)(struct lws_display_state *lds, uint8_t contrast);
-	int (*blit)(struct lws_display_state *lds, const uint8_t *src,
-		    lws_box_t *box, lws_dll2_owner_t *ids);
-	int (*power)(struct lws_display_state *lds, int state);
+	int (*contrast)(const struct lws_display *disp, uint8_t contrast);
+	int (*blit)(const struct lws_display *disp, const uint8_t *src,
+		    lws_display_scalar x, lws_display_scalar y,
+		    lws_display_scalar w, lws_display_scalar h);
+	int (*power)(const struct lws_display *disp, int state);
 
 	const lws_led_sequence_def_t	*bl_active;
 	const lws_led_sequence_def_t	*bl_dim;
 	const lws_led_sequence_def_t	*bl_transition;
 
-	const char			*name;
 	void				*variant;
 
 	int				bl_index;
 
-	lws_surface_info_t		ic;
+	lws_display_scalar		w;
+	/**< display surface width in pixels */
+	lws_display_scalar		h;
+	/**< display surface height in pixels */
 
-	uint16_t			latency_wake_ms;
+	uint8_t				latency_wake_ms;
 	/**< ms required after wake from sleep before display usable again...
 	 * delay bringing up the backlight for this amount of time on wake.
 	 * This is managed via a sul on the event loop, not blocking. */
-	uint16_t			latency_update_ms;
-	/**< nominal update latency in ms */
 } lws_display_t;
 
 /*
@@ -138,13 +83,8 @@ enum lws_display_controller_state {
 typedef struct lws_display_state {
 
 	lws_sorted_usec_list_t		sul_autodim;
-
-	char				current_url[96];
-
 	const lws_display_t		*disp;
 	struct lws_context		*ctx;
-
-	void				*priv; /* subclass driver alloc'd priv */
 
 	int				autodim_ms;
 	int				off_ms;
@@ -156,12 +96,7 @@ typedef struct lws_display_state {
 
 	enum lws_display_controller_state state;
 
-	char				display_busy;
-
 } lws_display_state_t;
-
-/* Used for async display driver events, eg, EPD refresh completion */
-typedef int (*lws_display_completion_t)(lws_display_state_t *lds, int a);
 
 /**
  * lws_display_state_init() - initialize display states

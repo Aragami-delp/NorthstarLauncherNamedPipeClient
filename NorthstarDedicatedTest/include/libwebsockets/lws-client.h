@@ -48,13 +48,6 @@ enum lws_client_connect_ssl_connection_flags {
 	LCCSCF_HTTP_MULTIPART_MIME		= (1 << 10),
 	LCCSCF_HTTP_X_WWW_FORM_URLENCODED	= (1 << 11),
 	LCCSCF_HTTP_NO_FOLLOW_REDIRECT		= (1 << 12),
-	LCCSCF_HTTP_NO_CACHE_CONTROL		= (1 << 13),
-
-	LCCSCF_ALLOW_REUSE_ADDR				= (1 << 14),
-	/**< allow reuse local addresses in a bind call
-	 * When the listening socket is bound to INADDR_ANY with a specific port 
-	 * then it is not possible to bind to this port for any local address
-	 */
 
 	LCCSCF_PIPELINE				= (1 << 16),
 		/**< Serialize / pipeline multiple client connections
@@ -121,8 +114,7 @@ struct lws_client_connect_info {
 	int ssl_connection;
 	/**< 0, or a combination of LCCSCF_ flags */
 	const char *path;
-	/**< URI path. Prefix with + for a UNIX socket. (+@ for
-     * a Linux abstract-namespace socket) */
+	/**< uri path */
 	const char *host;
 	/**< content of host header */
 	const char *origin;
@@ -165,9 +157,6 @@ struct lws_client_connect_info {
 	const char *iface;
 	/**< NULL to allow routing on any interface, or interface name or IP
 	 * to bind the socket to */
-	int local_port;
-	/**< 0 to pick an ephemeral port, or a specific local port
-	 * to bind the socket to */
 	const char *local_protocol_name;
 	/**< NULL: .protocol is used both to select the local protocol handler
 	 *         to bind to and as the list of remote ws protocols we could
@@ -180,6 +169,11 @@ struct lws_client_connect_info {
 	 *       list of roles built into lws
 	 * non-NULL: require one from provided comma-separated list of alpn
 	 *           tokens
+	 */
+
+	struct lws_sequencer *seq;
+	/**< NULL, or an lws_seq_t that wants to be given messages about
+	 * this wsi's lifecycle as it connects, errors or closes.
 	 */
 
 	void *opaque_user_data;
@@ -318,7 +312,6 @@ lws_http_client_read(struct lws *wsi, char **buf, int *len);
  * \param wsi: client connection
  *
  * Returns the last server response code, eg, 200 for client http connections.
- * If there is no valid response, it will return 0.
  *
  * You should capture this during the LWS_CALLBACK_ESTABLISHED_CLIENT_HTTP
  * callback, because after that the memory reserved for storing the related

@@ -51,6 +51,32 @@ typedef int (*plugin_auth_status_cb)(struct lws_ss_handle *ss, int status);
  * has the LWSSSPOLF_NAILED_UP flag.
  */
 
+#if defined(LWS_WITH_SSPLUGINS)
+typedef struct lws_ss_plugin {
+	struct lws_ss_plugin	*next;
+	const char		*name;	/**< auth plugin name */
+	size_t			alloc;	/**< size of private allocation */
+
+	int			(*create)(struct lws_ss_handle *ss, void *info,
+					  plugin_auth_status_cb status);
+				/**< called when the auth plugin is instantiated
+				     and bound to the secure stream.  status is
+				     called back with advisory information about
+				     the authenticated stream state as it
+				     proceeds */
+	int			(*destroy)(struct lws_ss_handle *ss);
+				/**< called when the related secure stream is
+				     being destroyed, and anything the auth
+				     plugin is doing should also be destroyed */
+	int			(*munge)(struct lws_ss_handle *ss, char *path,
+					 size_t path_len);
+				/**< if the plugin needs to munge transactions
+				     that have metadata outside the payload (eg,
+				     add http headers) this callback will give
+				     it the opportunity to do so */
+} lws_ss_plugin_t;
+#endif
+
 /* the public, const metrics policy definition */
 
 typedef struct lws_metric_policy {
@@ -234,10 +260,6 @@ typedef struct lws_ss_policy {
 	const lws_metric_policy_t *metrics; /* linked-list of metric policies */
 	const lws_ss_auth_t	*auth; /* NULL or auth object we bind to */
 
-#if defined(LWS_WITH_SERVER)
-	const struct lws_protocol_vhost_options *pvo;
-#endif
-
 	/* protocol-specific connection policy details */
 
 	union {
@@ -290,18 +312,12 @@ typedef struct lws_ss_policy {
 			const char	*will_topic;
 			const char	*will_message;
 
-			const char	*birth_topic;
-			const char	*birth_message;
-
 			uint16_t	keep_alive;
 			uint8_t		qos;
 			uint8_t		clean_start;
 			uint8_t		will_qos;
 			uint8_t		will_retain;
-			uint8_t		birth_qos;
-			uint8_t		birth_retain;
 			uint8_t		aws_iot;
-			uint8_t		retain;
 
 		} mqtt;
 
@@ -309,6 +325,12 @@ typedef struct lws_ss_policy {
 
 		/* details for non-http related protocols... */
 	} u;
+
+#if defined(LWS_WITH_SSPLUGINS)
+	const
+	struct lws_ss_plugin	*plugins[2]; /**< NULL or auth plugin */
+	const void		*plugins_info[2];   /**< plugin-specific data */
+#endif
 
 #if defined(LWS_WITH_SECURE_STREAMS_AUTH_SIGV4)
 	/* directly point to the metadata name, no need to expand */
@@ -335,9 +357,6 @@ typedef struct lws_ss_policy {
 
 	const lws_retry_bo_t	*retry_bo;   /**< retry policy to use */
 
-	int32_t			txc;
-	int32_t			txc_peer;
-
 	uint32_t		proxy_buflen; /**< max dsh alloc for proxy */
 	uint32_t		proxy_buflen_rxflow_on_above;
 	uint32_t		proxy_buflen_rxflow_off_below;
@@ -345,6 +364,7 @@ typedef struct lws_ss_policy {
 	uint32_t		client_buflen; /**< max dsh alloc for client */
 	uint32_t		client_buflen_rxflow_on_above;
 	uint32_t		client_buflen_rxflow_off_below;
+
 
 	uint32_t		timeout_ms;  /**< default message response
 					      * timeout in ms */

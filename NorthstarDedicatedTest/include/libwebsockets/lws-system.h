@@ -133,11 +133,6 @@ typedef enum { /* keep system_state_names[] in sync in context.c */
 	LWS_SYSTATE_AUTH1,		 /* identity used for main auth token */
 	LWS_SYSTATE_AUTH2,		 /* identity used for optional auth */
 
-	LWS_SYSTATE_ONE_TIME_UPDATES,	 /* pre-OPERATIONAL one-time updates,
-					  * when a firmware needs to perform
-					  * one-time upgrades to state before
-					  * OPERATIONAL */
-
 	LWS_SYSTATE_OPERATIONAL,	 /* user code can operate normally */
 
 	LWS_SYSTATE_POLICY_INVALID,	 /* user code is changing its policies
@@ -145,9 +140,6 @@ typedef enum { /* keep system_state_names[] in sync in context.c */
 					  * policy, switch to new then enter
 					  * LWS_SYSTATE_POLICY_VALID */
 	LWS_SYSTATE_CONTEXT_DESTROYING,	 /* Context is being destroyed */
-	LWS_SYSTATE_AWAITING_MODAL_UPDATING,	 /* We're negotiating with the
-						  * user code for update mode */
-	LWS_SYSTATE_MODAL_UPDATING,	 /* We're updating the firmware */
 } lws_system_states_t;
 
 /* Captive Portal Detect -related */
@@ -195,12 +187,11 @@ typedef struct lws_system_ops {
 	 * by calling lws_captive_portal_detect_result() api
 	 */
 
-#if defined(LWS_WITH_NETWORK)
 	int (*metric_report)(lws_metric_pub_t *mdata);
 	/**< metric \p item is reporting an event of kind \p rpt,
 	 * held in \p mdata... return 0 to leave the metric object as it is,
 	 * or nonzero to reset it. */
-#endif
+
 	int (*jit_trust_query)(struct lws_context *cx, const uint8_t *skid,
 			       size_t skid_len, void *got_opaque);
 	/**< user defined trust store search, if we do trust a cert with SKID
@@ -210,12 +201,7 @@ typedef struct lws_system_ops {
 	 * returning.  The DER should be destroyed if in heap before returning.
 	 */
 
-#if defined(LWS_WITH_OTA)
-	lws_ota_ops_t		ota_ops;
-	/**< Platform OTA interface to lws_ota, see lws-ota.h */
-#endif
-
-	uint32_t		wake_latency_us;
+	uint32_t	wake_latency_us;
 	/**< time taken for this device to wake from suspend, in us
 	 */
 } lws_system_ops_t;
@@ -323,7 +309,6 @@ enum {
 	_LWSDH_SA46_COUNT,
 };
 
-#if defined(LWS_WITH_NETWORK)
 typedef struct lws_dhcpc_ifstate {
 	char				ifname[16];
 	char				domain[64];
@@ -412,6 +397,3 @@ lws_system_cpd_set(struct lws_context *context, lws_cpd_result_t result);
  */
 LWS_EXTERN LWS_VISIBLE lws_cpd_result_t
 lws_system_cpd_state_get(struct lws_context *context);
-
-#endif
-

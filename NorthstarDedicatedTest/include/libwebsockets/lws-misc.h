@@ -178,66 +178,6 @@ lws_buflist_destroy_all_segments(struct lws_buflist **head);
 LWS_VISIBLE LWS_EXTERN void
 lws_buflist_describe(struct lws_buflist **head, void *id, const char *reason);
 
-
-/*
- * Optional helpers for closely-managed stream flow control.  These are useful
- * when there is no memory for large rx buffers and instead tx credit is being
- * used to regulate the server sending data.
- *
- * When combined with stateful consumption-on-demand, this can be very effective
- * at managing data flows through restricted circumstances.  These helpers
- * implement a golden implementation that can be bound to a stream in its priv
- * data.
- *
- * The helper is sophisticated enough to contain a buflist to manage overflows
- * on heap and preferentially drain it.  RX goes through heap to guarantee the
- * consumer can exit cleanly at any time.
- */
-
-enum {
-	LWSDLOFLOW_STATE_READ, /* default, we want input */
-	LWSDLOFLOW_STATE_READ_COMPLETED, /* we do not need further rx, every-
-					  * thing is locally buffered or used */
-	LWSDLOFLOW_STATE_READ_FAILED, /* operation has fatal error */
-};
-
-struct lws_ss_handle;
-
-typedef struct lws_flow {
-	lws_dll2_t			list;
-
-	struct lws_ss_handle		*h;
-	struct lws_buflist		*bl;
-
-	const uint8_t			*data;
-	size_t				len;		/* bytes left in data */
-	uint32_t			blseglen;	/* bytes issued */
-	int32_t				window;
-
-	uint8_t				state;
-} lws_flow_t;
-
-/**
- * lws_flow_feed() - consume waiting data if ready for it
- *
- * \param flow: pointer to the flow struct managing waiting data
- *
- * This will bring out waiting data from the flow buflist when it is needed.
- */
-LWS_VISIBLE LWS_EXTERN lws_stateful_ret_t
-lws_flow_feed(lws_flow_t *flow);
-
-/**
- * lws_flow_req() - request remote data if we have run low
- *
- * \param flow: pointer to the flow struct managing waiting data
- *
- * When the estimated remote tx credit is below flow->window, accounting for
- * what is in the buflist, add to the peer tx credit so it can send us more.
- */
-LWS_VISIBLE LWS_EXTERN lws_stateful_ret_t
-lws_flow_req(lws_flow_t *flow);
-
 /**
  * lws_ptr_diff(): helper to report distance between pointers as an int
  *
@@ -349,25 +289,6 @@ lws_json_simple_find(const char *buf, size_t len, const char *name, size_t *alen
 LWS_VISIBLE LWS_EXTERN int
 lws_json_simple_strcmp(const char *buf, size_t len, const char *name, const char *comp);
 
-/**
- * lws_hex_len_to_byte_array(): convert hex string like 0123456789ab into byte data
- *
- * \param h: incoming hex string
- * \param hlen: number of chars to process at \p h
- * \param dest: array to fill with binary decodes of hex pairs from h
- * \param max: maximum number of bytes dest can hold, must be at least half
- *		the size of strlen(h)
- *
- * This converts hex strings into an array of 8-bit representations, ie the
- * input "abcd" produces two bytes of value 0xab and 0xcd.
- *
- * Returns number of bytes produced into \p dest, or -1 on error.
- *
- * Errors include non-hex chars and an odd count of hex chars in the input
- * string.
- */
-LWS_VISIBLE LWS_EXTERN int
-lws_hex_len_to_byte_array(const char *h, size_t hlen, uint8_t *dest, int max);
 
 /**
  * lws_hex_to_byte_array(): convert hex string like 0123456789ab into byte data
@@ -961,13 +882,6 @@ LWS_VISIBLE extern const lws_humanize_unit_t humanize_schema_si[7];
 LWS_VISIBLE extern const lws_humanize_unit_t humanize_schema_si_bytes[7];
 LWS_VISIBLE extern const lws_humanize_unit_t humanize_schema_us[8];
 
-#if defined(_DEBUG)
-void
-lws_assert_fourcc(uint32_t fourcc, uint32_t expected);
-#else
-#define lws_assert_fourcc(_a, _b) do { } while (0);
-#endif
-
 /**
  * lws_humanize() - Convert possibly large number to human-readable uints
  *
@@ -1206,45 +1120,3 @@ lws_fsmount_mount(struct lws_fsmount *fsm);
  */
 LWS_VISIBLE LWS_EXTERN int
 lws_fsmount_unmount(struct lws_fsmount *fsm);
-
-#define LWS_MINILEX_FAIL -1
-#define LWS_MINILEX_CONTINUE 0
-#define LWS_MINILEX_MATCH 1
-
-/**
- * lws_minilex_parse() - stateful matching vs lws minilex tables
- *
- * \p lex: the start of the precomputed minilex table
- * \p ps: pointer to the int16_t that holds the parsing state (init to 0)
- * \p c: the next incoming character to parse
- * \p match: pointer to take the match
- *
- * Returns either
- *
- *  - LWS_MINILEX_FAIL if there is no way to match the characters seen,
- * this is sticky for additional characters until the *ps is reset to 0.
- *
- *  - LWS_MINILEX_CONTINUE if the character could be part of a match but more
- *    are required to see if it can match
- *
- *  - LWS_MINILEX_MATCH and *match is set to the match index if there is a
- *    valid match.
- *
- * In cases where the match is ambiguous, eg, we saw "right" and the possible
- * matches are "right" or "right-on", LWS_MINILEX_CONTINUE is returned.  To
- * allow it to match on the complete-but-ambiguous token, if the caller sees
- * a delimiter it can call lws_minilex_parse() again with c == 0.  This will
- * either return LWS_MINILEX_MATCH and set *match to the smaller ambiguous
- * match, or return LWS_MINILEX_FAIL.
- */
-LWS_VISIBLE LWS_EXTERN int
-lws_minilex_parse(const uint8_t *lex, int16_t *ps, const uint8_t c,
-			int *match);
-
-/*
- * Reports the number of significant bits (from the left) that is needed to
- * represent u.  So if u is 0x80, result is 8.
- */
-
-LWS_VISIBLE LWS_EXTERN unsigned int
-lws_sigbits(uintptr_t u);

@@ -6,12 +6,12 @@
 	#endif
 #endif
 
-#define LWS_INSTALL_DATADIR "C:/Program Files (x86)/libwebsockets/share"
-#define LWS_INSTALL_LIBDIR "C:/Program Files (x86)/libwebsockets/lib"
+#define LWS_INSTALL_DATADIR "/share"
+#define LWS_INSTALL_LIBDIR "/lib"
 #define LWS_LIBRARY_VERSION_MAJOR 4
 #define LWS_LIBRARY_VERSION_MINOR 3
-#define LWS_LIBRARY_VERSION_PATCH_ELABORATED 99-v4.3.0-227-g338f55e9
-#define LWS_LIBRARY_VERSION_PATCH 99
+#define LWS_LIBRARY_VERSION_PATCH_ELABORATED 0-2022.04.12-22-gaebb363ea
+#define LWS_LIBRARY_VERSION_PATCH 0
 
 /* LWS_LIBRARY_VERSION_NUMBER looks like 1005001 for e.g. version 1.5.1 */
 #define LWS_LIBRARY_VERSION_NUMBER (LWS_LIBRARY_VERSION_MAJOR * 1000000) + \
@@ -22,12 +22,11 @@
 /* #undef LWS_ESP_PLATFORM */
 /* #undef LWS_LIBRARY_VERSION_NUMBER */
 
-/* #undef LWS_EXT_PTHREAD_LIBRARIES */
+#define LWS_EXT_PTHREAD_LIBRARIES
 
 /* #undef LWS_AVOID_SIGPIPE_IGN */
-#define LWS_BUILD_HASH "v4.3.0-227-g338f55e9"
+#define LWS_BUILD_HASH "2022.04.12-22-gaebb363ea"
 #define LWS_BUILTIN_GETIFADDRS
-/* #undef LWS_BUILTIN_PLUGIN_NAMES */
 #define LWS_CLIENT_HTTP_PROXYING
 /* #undef LWS_DETECTED_PLAT_IOS */
 /* #undef LWS_FALLBACK_GETHOSTBYNAME */
@@ -80,12 +79,12 @@
 /* #undef LWS_HAVE_mbedtls_x509_crt_parse_file */
 /* #undef LWS_HAVE_MBEDTLS_NET_SOCKETS */
 /* #undef LWS_HAVE_MBEDTLS_AUTH_KEY_ID */
-/* #undef LWS_HAVE_NEW_UV_VERSION_H */
-/* #undef LWS_HAVE_OPENSSL_ECDH_H */
+#define LWS_HAVE_NEW_UV_VERSION_H
+#define LWS_HAVE_OPENSSL_ECDH_H
 #define LWS_HAVE_OPENSSL_STACK
 /* #undef LWS_HAVE_PIPE2 */
 /* #undef LWS_HAVE_EVENTFD */
-/* #undef LWS_HAVE_PTHREAD_H */
+#define LWS_HAVE_PTHREAD_H
 #define LWS_HAVE_RSA_SET0_KEY
 /* #undef LWS_HAVE_RSA_verify_pss_mgf1 */
 #define LWS_HAVE_SSL_CTX_get0_certificate
@@ -93,7 +92,6 @@
 /* #undef LWS_HAVE_SSL_CTX_load_verify_dir */
 #define LWS_HAVE_SSL_CTX_set1_param
 /* #undef LWS_HAVE_SSL_CTX_set_ciphersuites */
-#define LWS_HAVE_SSL_CTX_set_keylog_callback
 #define LWS_HAVE_SSL_EXTRA_CHAIN_CERTS
 #define LWS_HAVE_SSL_get0_alpn_selected
 /* #undef LWS_HAVE_SSL_CTX_EVP_PKEY_new_raw_private_key */
@@ -103,7 +101,6 @@
 /* #undef LWS_HAVE_SSL_SESSION_up_ref */
 #define LWS_HAVE__STAT32I64
 #define LWS_HAVE_STDINT_H
-#define LWS_HAVE_SYS_TYPES_H
 /* #undef LWS_HAVE_SYS_CAPABILITY_H */
 /* #undef LWS_HAVE_TIMEGM */
 #define LWS_HAVE_TLS_CLIENT_METHOD
@@ -113,22 +110,18 @@
 /* #undef LWS_HAVE_VFORK */
 #define LWS_HAVE_X509_get_key_usage
 #define LWS_HAVE_X509_VERIFY_PARAM_set1_host
-#define LWS_LIBRARY_VERSION "4.3.99-v4.3.0-227-g338f55e9"
+#define LWS_LIBRARY_VERSION "4.3.0-2022.04.12-22-gaebb363ea"
 #define LWS_LOGGING_BITFIELD_CLEAR 0
 #define LWS_LOGGING_BITFIELD_SET 0
 #define LWS_LOG_TAG_LIFECYCLE
 /* #undef LWS_MINGW_SUPPORT */
 /* #undef LWS_NO_CLIENT */
 #define LWS_NO_DAEMONIZE
-/* #undef LWS_ONLY_SSPC */
 #define LWS_OPENSSL_CLIENT_CERTS "../share"
 #define LWS_OPENSSL_SUPPORT
-/* #undef LWS_OTA_PUBLIC_JWK */
-#define LWS_OTA_VARIANT "set-LWS_OTA_VARIANT"
 /* #undef LWS_PLAT_OPTEE */
 /* #undef LWS_PLAT_UNIX */
 /* #undef LWS_PLAT_FREERTOS */
-/* #undef LWS_PLAT_BAREMETAL */
 /* #undef LWS_ROLE_CGI */
 /* #undef LWS_ROLE_DBUS */
 #define LWS_ROLE_H1
@@ -147,51 +140,43 @@
 /* #undef LWS_WITH_ABSTRACT */
 /* #undef LWS_WITH_ACCESS_LOG */
 /* #undef LWS_WITH_ACME */
-/* #undef LWS_WITH_ALLOC_METADATA_LWS */
 /* #undef LWS_WITH_ALSA */
 /* #undef LWS_WITH_SYS_ASYNC_DNS */
 /* #undef LWS_WITH_BORINGSSL */
 /* #undef LWS_WITH_CGI */
-/* #undef LWS_WITH_COMPRESSED_BACKTRACES */
-#define LWS_COMPRESSED_BACKTRACES_SNIP_PRE 2
-#define LWS_COMPRESSED_BACKTRACES_SNIP_POST 1
 #define LWS_WITH_CONMON
 /* #undef LWS_WITH_COSE */
 #define LWS_WITH_CUSTOM_HEADERS
 /* #undef LWS_WITH_DEPRECATED_LWS_DLL */
 /* #undef LWS_WITH_DETAILED_LATENCY */
 #define LWS_WITH_DIR
-#define LWS_WITH_DLO
 /* #undef LWS_WITH_DRIVERS */
 /* #undef LWS_WITH_ESP32 */
 /* #undef LWS_HAVE_EVBACKEND_LINUXAIO */
 /* #undef LWS_HAVE_EVBACKEND_IOURING */
-/* #undef LWS_WITH_EXTERNAL_POLL */
+#define LWS_WITH_EXTERNAL_POLL
 #define LWS_WITH_FILE_OPS
 /* #undef LWS_WITH_FSMOUNT */
 /* #undef LWS_WITH_FTS */
-/* #undef LWS_WITH_GENCRYPTO */
+#define LWS_WITH_GENCRYPTO
 /* #undef LWS_WITH_GENERIC_SESSIONS */
 /* #undef LWS_WITH_GLIB */
 /* #undef LWS_WITH_GTK */
-#define LWS_WITH_GZINFLATE
 #define LWS_WITH_HTTP2
 #define LWS_WITH_HTTP_BASIC_AUTH
 /* #undef LWS_WITH_HTTP_BROTLI */
 /* #undef LWS_HTTP_HEADERS_ALL */
 /* #undef LWS_WITH_HTTP_PROXY */
-/* #undef LWS_WITH_HTTP_STREAM_COMPRESSION */
+#define LWS_WITH_HTTP_STREAM_COMPRESSION
 #define LWS_WITH_HTTP_UNCOMMON_HEADERS
-/* #undef LWS_WITH_IPV6 */
+#define LWS_WITH_IPV6
 /* #undef LWS_WITH_JOSE */
 /* #undef LWS_WITH_CBOR */
 #define LWS_WITH_CBOR_FLOAT
-#define LWS_WITH_JSONRPC
 #define LWS_WITH_LEJP
-#define LWS_WITH_LHP
 /* #undef LWS_WITH_LIBEV */
 /* #undef LWS_WITH_LIBEVENT */
-/* #undef LWS_WITH_LIBUV */
+#define LWS_WITH_LIBUV
 /* #undef LWS_WITH_SDEVENT */
 #define LWS_WITH_LWSAC
 #define LWS_LOGS_TIMESTAMP
@@ -200,23 +185,21 @@
 /* #undef LWS_WITH_NETLINK */
 #define LWS_WITH_NETWORK
 /* #undef LWS_WITH_NO_LOGS */
-/* #undef LWS_WITH_OTA */
 #define LWS_WITH_CACHE_NSCOOKIEJAR
 #define LWS_WITH_CLIENT
 #define LWS_WITHOUT_EXTENSIONS
 #define LWS_WITH_SERVER
 /* #undef LWS_WITH_SPAWN */
 /* #undef LWS_WITH_PEER_LIMITS */
-#define LWS_WITH_JPEG
 /* #undef LWS_WITH_PLUGINS */
 /* #undef LWS_WITH_PLUGINS_BUILTIN */
 /* #undef LWS_WITH_POLARSSL */
 #define LWS_WITH_POLL
 /* #undef LWS_WITH_RANGES */
 /* #undef LWS_WITH_RFC6724 */
-#define LWS_WITH_SECURE_STREAMS
+/* #undef LWS_WITH_SECURE_STREAMS */
 /* #undef LWS_WITH_SECURE_STREAMS_CPP */
-#define LWS_WITH_SECURE_STREAMS_SYS_AUTH_API_AMAZON_COM
+/* #undef LWS_WITH_SECURE_STREAMS_SYS_AUTH_API_AMAZON_COM */
 /* #undef LWS_WITH_SECURE_STREAMS_PROXY_API */
 /* #undef LWS_WITH_SECURE_STREAMS_STATIC_POLICY_ONLY */
 /* #undef LWS_WITH_SECURE_STREAMS_AUTH_SIGV4 */
@@ -239,8 +222,6 @@
 /* #undef LWS_WITH_SYS_METRICS */
 /* #undef LWS_WITH_SYS_NTPCLIENT */
 #define LWS_WITH_SYS_STATE
-/* #undef LWS_WITHOUT_TEST_SERVER */
-/* #undef LWS_WITHOUT_TESTAPPS */
 /* #undef LWS_WITH_THREADPOOL */
 #define LWS_WITH_TLS
 /* #undef LWS_WITH_TLS_JIT_TRUST */
@@ -248,14 +229,12 @@
 #define LWS_WITH_UDP
 /* #undef LWS_WITH_ULOOP */
 #define LWS_WITH_UNIX_SOCK
-#define LWS_WITH_UPNG
 /* #undef LWS_WITH_ZIP_FOPS */
 /* #undef USE_OLD_CYASSL */
 /* #undef USE_WOLFSSL */
-/* #undef LWS_WITH_EVENT_LIBS */
+#define LWS_WITH_EVENT_LIBS
 /* #undef LWS_WITH_EVLIB_PLUGINS */
 /* #undef LWS_WITH_LIBUV_INTERNAL */
 /* #undef LWS_WITH_PLUGINS_API */
 /* #undef LWS_HAVE_RTA_PREF */
-/* #undef PICO_SDK_PATH */
 

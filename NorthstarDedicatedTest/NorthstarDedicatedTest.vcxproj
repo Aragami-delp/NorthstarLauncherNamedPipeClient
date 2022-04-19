@@ -87,8 +87,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories); C:\Program Files\vcpkg\vcpkg\installed\include\libwebsockets</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalUsingDirectories>C:\Program Files\vcpkg\vcpkg\installed\include\libwebsockets</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -213,6 +214,97 @@ copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"</C
     <ClInclude Include="include\boost\version.hpp" />
     <ClInclude Include="include\boost\visit_each.hpp" />
     <ClInclude Include="include\boost\weak_ptr.hpp" />
+    <ClInclude Include="include\libwebsockets.h" />
+    <ClInclude Include="include\libwebsockets\lws-adopt.h" />
+    <ClInclude Include="include\libwebsockets\lws-async-dns.h" />
+    <ClInclude Include="include\libwebsockets\lws-backtrace.h" />
+    <ClInclude Include="include\libwebsockets\lws-bb-i2c.h" />
+    <ClInclude Include="include\libwebsockets\lws-bb-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-button.h" />
+    <ClInclude Include="include\libwebsockets\lws-cache-ttl.h" />
+    <ClInclude Include="include\libwebsockets\lws-callbacks.h" />
+    <ClInclude Include="include\libwebsockets\lws-cgi.h" />
+    <ClInclude Include="include\libwebsockets\lws-client.h" />
+    <ClInclude Include="include\libwebsockets\lws-conmon.h" />
+    <ClInclude Include="include\libwebsockets\lws-context-vhost.h" />
+    <ClInclude Include="include\libwebsockets\lws-cose.h" />
+    <ClInclude Include="include\libwebsockets\lws-dbus.h" />
+    <ClInclude Include="include\libwebsockets\lws-diskcache.h" />
+    <ClInclude Include="include\libwebsockets\lws-display.h" />
+    <ClInclude Include="include\libwebsockets\lws-dll2.h" />
+    <ClInclude Include="include\libwebsockets\lws-dlo.h" />
+    <ClInclude Include="include\libwebsockets\lws-dsh.h" />
+    <ClInclude Include="include\libwebsockets\lws-esp32-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-eventlib-exports.h" />
+    <ClInclude Include="include\libwebsockets\lws-fault-injection.h" />
+    <ClInclude Include="include\libwebsockets\lws-freertos.h" />
+    <ClInclude Include="include\libwebsockets\lws-fts.h" />
+    <ClInclude Include="include\libwebsockets\lws-genaes.h" />
+    <ClInclude Include="include\libwebsockets\lws-gencrypto.h" />
+    <ClInclude Include="include\libwebsockets\lws-genec.h" />
+    <ClInclude Include="include\libwebsockets\lws-genhash.h" />
+    <ClInclude Include="include\libwebsockets\lws-genrsa.h" />
+    <ClInclude Include="include\libwebsockets\lws-gpio.h" />
+    <ClInclude Include="include\libwebsockets\lws-html.h" />
+    <ClInclude Include="include\libwebsockets\lws-http.h" />
+    <ClInclude Include="include\libwebsockets\lws-i2c.h" />
+    <ClInclude Include="include\libwebsockets\lws-ili9341-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-jose.h" />
+    <ClInclude Include="include\libwebsockets\lws-jpeg.h" />
+    <ClInclude Include="include\libwebsockets\lws-jrpc.h" />
+    <ClInclude Include="include\libwebsockets\lws-jwe.h" />
+    <ClInclude Include="include\libwebsockets\lws-jwk.h" />
+    <ClInclude Include="include\libwebsockets\lws-jws.h" />
+    <ClInclude Include="include\libwebsockets\lws-lecp.h" />
+    <ClInclude Include="include\libwebsockets\lws-led.h" />
+    <ClInclude Include="include\libwebsockets\lws-lejp.h" />
+    <ClInclude Include="include\libwebsockets\lws-logs.h" />
+    <ClInclude Include="include\libwebsockets\lws-lwsac.h" />
+    <ClInclude Include="include\libwebsockets\lws-map.h" />
+    <ClInclude Include="include\libwebsockets\lws-metrics.h" />
+    <ClInclude Include="include\libwebsockets\lws-misc.h" />
+    <ClInclude Include="include\libwebsockets\lws-mqtt.h" />
+    <ClInclude Include="include\libwebsockets\lws-netdev.h" />
+    <ClInclude Include="include\libwebsockets\lws-network-helper.h" />
+    <ClInclude Include="include\libwebsockets\lws-optee.h" />
+    <ClInclude Include="include\libwebsockets\lws-ota.h" />
+    <ClInclude Include="include\libwebsockets\lws-protocols-plugins.h" />
+    <ClInclude Include="include\libwebsockets\lws-purify.h" />
+    <ClInclude Include="include\libwebsockets\lws-pwm.h" />
+    <ClInclude Include="include\libwebsockets\lws-retry.h" />
+    <ClInclude Include="include\libwebsockets\lws-ring.h" />
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-client.h" />
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-policy.h" />
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-serialization.h" />
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-transport-proxy.h" />
+    <ClInclude Include="include\libwebsockets\lws-secure-streams.h" />
+    <ClInclude Include="include\libwebsockets\lws-service.h" />
+    <ClInclude Include="include\libwebsockets\lws-settings.h" />
+    <ClInclude Include="include\libwebsockets\lws-sha1-base64.h" />
+    <ClInclude Include="include\libwebsockets\lws-smd.h" />
+    <ClInclude Include="include\libwebsockets\lws-spa.h" />
+    <ClInclude Include="include\libwebsockets\lws-spd1656-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-ssd1306-i2c.h" />
+    <ClInclude Include="include\libwebsockets\lws-ssd1675b-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-state.h" />
+    <ClInclude Include="include\libwebsockets\lws-struct.h" />
+    <ClInclude Include="include\libwebsockets\lws-system.h" />
+    <ClInclude Include="include\libwebsockets\lws-test-sequencer.h" />
+    <ClInclude Include="include\libwebsockets\lws-threadpool.h" />
+    <ClInclude Include="include\libwebsockets\lws-timeout-timer.h" />
+    <ClInclude Include="include\libwebsockets\lws-tls-sessions.h" />
+    <ClInclude Include="include\libwebsockets\lws-tokenize.h" />
+    <ClInclude Include="include\libwebsockets\lws-uc8176-spi.h" />
+    <ClInclude Include="include\libwebsockets\lws-upng.h" />
+    <ClInclude Include="include\libwebsockets\lws-vfs.h" />
+    <ClInclude Include="include\libwebsockets\lws-write.h" />
+    <ClInclude Include="include\libwebsockets\lws-writeable.h" />
+    <ClInclude Include="include\libwebsockets\lws-ws-close.h" />
+    <ClInclude Include="include\libwebsockets\lws-ws-ext.h" />
+    <ClInclude Include="include\libwebsockets\lws-ws-state.h" />
+    <ClInclude Include="include\libwebsockets\lws-x509.h" />
+    <ClInclude Include="include\lws_config.h" />
     <ClInclude Include="localchatwriter.h" />
     <ClInclude Include="plugins.h" />
     <ClInclude Include="plugin_abi.h" />
@@ -662,6 +754,7 @@ copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"</C
     <ClInclude Include="ExploitFixes_UTF8Parser.h" />
     <ClInclude Include="NSMem.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="WebSocketServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
@@ -722,6 +815,7 @@ copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"</C
     <ClCompile Include="squirrel.cpp" />
     <ClCompile Include="ExploitFixes.cpp" />
     <ClCompile Include="version.cpp" />
+    <ClCompile Include="WebSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\crypto\bn_conf.h.in" />

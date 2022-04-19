@@ -47,7 +47,6 @@
  */
 LWS_VISIBLE LWS_EXTERN struct lws *
 lws_adopt_socket(struct lws_context *context, lws_sockfd_type accept_fd);
-
 /**
  * lws_adopt_socket_vhost() - adopt foreign socket as if listen socket accepted
  * it for vhost
@@ -75,20 +74,10 @@ typedef enum {
 	LWS_ADOPT_RAW_SOCKET_UDP = LWS_ADOPT_SOCKET | LWS_ADOPT_FLAG_UDP,
 } lws_adoption_type;
 
-#define LWS_NO_FDS_POS ((int32_t)-1)
-
 typedef union {
 	lws_sockfd_type sockfd;
 	lws_filefd_type filefd;
 } lws_sock_file_fd_type;
-
-typedef struct {
-	lws_sock_file_fd_type		u;
-#if defined(LWS_WITH_EVENT_LIBS)
-	void				*evlib_desc; /* overallocated */
-#endif
-	int32_t				pos_in_fds_table;
-} lws_desc_t;
 
 #if defined(LWS_ESP_PLATFORM)
 #include <lwip/sockets.h>
@@ -157,20 +146,13 @@ lws_adopt_descriptor_vhost(struct lws_vhost *vh, lws_adoption_type type,
 			   struct lws *parent);
 
 typedef struct lws_adopt_desc {
-	struct lws_vhost	*vh;		/**< vhost the wsi should belong to */
-	lws_adoption_type	type;		/**< OR-ed combinations of
-						 * lws_adoption_type flags */
-	lws_sock_file_fd_type	fd;		/**< union with either .sockfd
-						 * or .filefd set */
-	const char		*vh_prot_name;	/**< NULL or vh protocol name to
-						 * bind raw connection to */
-	struct lws		*parent; 	/**< NULL or struct lws to
-						 * attach new_wsi to as a child */
-	void			*opaque;	/**< opaque pointer to set on
-						 *created wsi */
-	const char		*fi_wsi_name;	/**< NULL, or Fault Injection
-						 * inheritence filter for
-						 * wsi=string/ context faults */
+	struct lws_vhost *vh;		/**< vhost the wsi should belong to */
+	lws_adoption_type type;		/**< OR-ed combinations of lws_adoption_type flags */
+	lws_sock_file_fd_type fd;	/**< union with either .sockfd or .filefd set */
+	const char *vh_prot_name;	/**< NULL or vh protocol name to bind raw connection to */
+	struct lws *parent;		/**< NULL or struct lws to attach new_wsi to as a child */
+	void *opaque;			/**< opaque pointer to set on created wsi */
+	const char *fi_wsi_name;	/**< NULL, or Fault Injection inheritence filter for wsi=string/ context faults */
 } lws_adopt_desc_t;
 
 /**

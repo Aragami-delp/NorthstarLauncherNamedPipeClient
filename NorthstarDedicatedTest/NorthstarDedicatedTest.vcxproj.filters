@@ -136,6 +136,9 @@
     <Filter Include="Header Files\include\boost">
       <UniqueIdentifier>{686834dd-6e7b-4def-8bed-e0cfa384fb51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\include\libwebsockets">
+      <UniqueIdentifier>{b86b0712-1bf1-4e97-8f5d-00d4d82cb2e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -1791,6 +1794,282 @@
     <ClInclude Include="include\boost\weak_ptr.hpp">
       <Filter>Header Files\include\boost</Filter>
     </ClInclude>
+    <ClInclude Include="include\libwebsockets.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lws_config.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-adopt.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-async-dns.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-backtrace.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-bb-i2c.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-bb-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-button.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-cache-ttl.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-callbacks.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-cgi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-client.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-conmon.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-context-vhost.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-cose.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-dbus.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-diskcache.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-display.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-dll2.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-dlo.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-dsh.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-esp32-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-eventlib-exports.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-fault-injection.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-freertos.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-fts.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-genaes.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-gencrypto.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-genec.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-genhash.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-genrsa.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-gpio.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-html.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-http.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-i2c.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ili9341-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jose.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jpeg.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jrpc.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jwe.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jwk.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-jws.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-lecp.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-led.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-lejp.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-logs.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-lwsac.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-map.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-metrics.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-misc.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-mqtt.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-netdev.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-network-helper.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-optee.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ota.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-protocols-plugins.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-purify.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-pwm.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-retry.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ring.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-secure-streams.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-client.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-policy.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-serialization.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-secure-streams-transport-proxy.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-service.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-settings.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-sha1-base64.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-smd.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-spa.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-spd1656-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ssd1306-i2c.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ssd1675b-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-state.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-struct.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-system.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-test-sequencer.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-threadpool.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-timeout-timer.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-tls-sessions.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-tokenize.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-uc8176-spi.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-upng.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-vfs.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-write.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-writeable.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ws-close.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ws-ext.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-ws-state.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libwebsockets\lws-x509.h">
+      <Filter>Header Files\include\libwebsockets</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSocketServer.h">
+      <Filter>Header Files\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -1956,6 +2235,9 @@
       <Filter>Source Files\Client</Filter>
     </ClCompile>
     <ClCompile Include="serverwebsocket.cpp">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="WebSocketServer.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
   </ItemGroup>
