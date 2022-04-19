@@ -272,8 +272,6 @@ bool InitialiseNorthstar()
 	AddDllLoadCallback("engine.dll", InitialiseServerChatHooks_Engine);
 	AddDllLoadCallback("server.dll", InitialiseServerChatHooks_Server);
 
-	// websocket - i don't need the dll, but the callback
-	AddDllLoadCallback("server.dll", InitialiseServerWebSocket_Server);
 
 	// maxplayers increase
 	AddDllLoadCallback("engine.dll", InitialiseMaxPlayersOverride_Engine);
@@ -289,5 +287,7 @@ bool InitialiseNorthstar()
 	// run callbacks for any libraries that are already loaded by now
 	CallAllPendingDLLLoadCallbacks();
 
+	// websocket - i don't need the dll, but the callback
+	AddDllLoadCallback("server.dll", InitialiseServerWebSocket_Server);
 	return true;
 }
