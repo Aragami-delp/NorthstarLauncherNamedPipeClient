@@ -1509,7 +1509,7 @@
     <ClInclude Include="clientruihooks.h">
       <Filter>Header Files\Client</Filter>
     </ClInclude>
-    <ClInclude Include="serverwebsocket.h">
+    <ClInclude Include="namedpipeclient.h">
       <Filter>Header Files\Server</Filter>
     </ClInclude>
     <ClInclude Include="include\boost\align.hpp">
@@ -1955,7 +1955,7 @@
     <ClCompile Include="clientruihooks.cpp">
       <Filter>Source Files\Client</Filter>
     </ClCompile>
-    <ClCompile Include="serverwebsocket.cpp">
+    <ClCompile Include="namedpipeclient.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
   </ItemGroup>

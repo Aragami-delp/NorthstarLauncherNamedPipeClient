@@ -34,7 +34,7 @@
 #include "buildainfile.h"
 #include "configurables.h"
 #include "serverchathooks.h"
-#include "serverwebsocket.h"
+#include "namedpipeclient.h"
 #include "clientchathooks.h"
 #include "localchatwriter.h"
 #include "scriptservertoclientstringcommand.h"
@@ -288,6 +288,6 @@ bool InitialiseNorthstar()
 	CallAllPendingDLLLoadCallbacks();
 
 	// websocket - i don't need the dll, but the callback
-	AddDllLoadCallback("server.dll", InitialiseServerWebSocket_Server);
+	AddDllLoadCallback("server.dll", InitialiseNamedPipeClient);
 	return true;
 }

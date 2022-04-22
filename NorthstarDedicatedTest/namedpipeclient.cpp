@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "serverwebsocket.h"
+#include "namedpipeclient.h"
 #include "squirrel.h" // Squirrel
 #include "miscserverscript.h" // GetPlayerByIndex
 
@@ -10,6 +10,7 @@
 #include <tchar.h>
 #include <iostream>
 #include <string>
+#include <atlstr.h>
 
 using namespace std;
 
@@ -25,15 +26,15 @@ SQRESULT SQ_SendToWebsocket(void* sqvm)
 	bool someBool = ServerSq_getbool(sqvm, 3);
 
 	// ChatSendMessage(someInteger, someText, someBool);
-	printf("[*] SendWebSocketMessage %d %s %s", someInteger, someText, someBool ? "true" : "false");
+	//printf("[*] SendWebSocketMessage %d %s %s", someInteger, someText, someBool ? "true" : "false");
 
 	bool success = false;
 	DWORD read;
 
-	TCHAR chBuff[BUFF_SIZE] = TEXT("Hallo3");
+	TCHAR chBuff[BUFF_SIZE];
+	_tcscpy_s(chBuff, CA2T(someText.c_str()));
 	do
 	{
-		int i = sizeof(TCHAR);
 		success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
 		// success = ReadFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
 	} while (!success);
@@ -41,7 +42,7 @@ SQRESULT SQ_SendToWebsocket(void* sqvm)
 	return SQRESULT_NULL;
 }
 
-void InitialiseServerWebSocket_Server(HMODULE baseAddress)
+void InitialiseNamedPipeClient(HMODULE baseAddress)
 {
 	// WebSocket sending functions
 	g_ServerSquirrelManager->AddFuncRegistration(
