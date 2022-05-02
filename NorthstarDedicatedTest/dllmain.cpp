@@ -287,7 +287,8 @@ bool InitialiseNorthstar()
 	// run callbacks for any libraries that are already loaded by now
 	CallAllPendingDLLLoadCallbacks();
 
-	// websocket - i don't need the dll, but the callback
+	// namedPipe - i don't need the dll, but the callback - nvm.
+	//InitialiseNamedPipeClient();
 	AddDllLoadCallback("server.dll", InitialiseNamedPipeClient);
 	return true;
 }
