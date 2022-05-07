@@ -42,12 +42,38 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 	return SQRESULT_NULL;
 }
 
+SQRESULT SQ_StartNewMatch(void* sqvm)
+{
+	// if (!shouldUseNamedPipe)
+	//	return SQRESULT_NULL;
+	string someText = ServerSq_getstring(sqvm, 1);
+	someText.append("|").append(Cvar_ns_server_name->GetString());
+
+	bool success = false;
+	DWORD read;
+
+	// Create buffer
+	TCHAR chBuff[BUFF_SIZE];
+	// Copy message to buffer
+	_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+	do
+	{
+		success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
+	} while (!success);
+
+	return SQRESULT_NULL;
+}
+
 //void InitialiseNamedPipeClient()
 void InitialiseNamedPipeClient(HMODULE baseAddress)
 {
 	// NamedPipe sending functions
 	g_ServerSquirrelManager->AddFuncRegistration(
 		"void", "NSSendToNamedPipe", "string textToSend", "", SQ_SendToNamedPipe);
+	// TODO: Check for commandId and send additional stuff based on that
+	g_ServerSquirrelManager->AddFuncRegistration(
+		"void", "NSStartNewMatch", "string textToSend", "", SQ_StartNewMatch);
 
 	//if (!shouldUseNamedPipe)
 	//	return;
