@@ -4,7 +4,7 @@
 #include "squirrel.h" // Squirrel
 #include "miscserverscript.h" // GetPlayerByIndex
 
-//Named Pipe Stuff
+// Named Pipe Stuff
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -15,29 +15,63 @@
 
 using namespace std;
 
-#define PIPE_NAME L"\\\\.\\pipe\\GameDataPipe"
+#define GENERAL_PIPE_NAME TEXT("\\\\.\\pipe\\GameDataPipe")
+//#define SPECIFIC_PIPE_PRENAME "\\\\.\\pipe\\"
 #define BUFF_SIZE 512
 
 HANDLE hPipe;
+bool isConnected = false;
+
+HANDLE GetNewPipeInstance()
+{
+	HANDLE generalPipe = CreateFile(GENERAL_PIPE_NAME, GENERIC_READ, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+	bool isGeneralConnected = generalPipe != INVALID_HANDLE_VALUE;
+	HANDLE thisMatchPipe = INVALID_HANDLE_VALUE;
+	if (isGeneralConnected)
+	{
+		TCHAR chBuf[BUFF_SIZE]; // TODO: Length of general pipe ids + terminating zero
+		DWORD cbRead;
+		if (ReadFile(
+				generalPipe, // pipe handle
+				chBuf, // buffer to receive reply
+				BUFF_SIZE * sizeof(TCHAR), // size of buffer
+				&cbRead, // number of bytes read
+				NULL)) // not overlapped
+		{
+			do
+			{
+				thisMatchPipe = CreateFile(chBuf, GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+			} while (thisMatchPipe == INVALID_HANDLE_VALUE);
+		}
+	}
+	return thisMatchPipe;
+}
 
 SQRESULT SQ_SendToNamedPipe(void* sqvm)
 {
-	//if (!shouldUseNamedPipe)
-	//	return SQRESULT_NULL;
-	string someText = ServerSq_getstring(sqvm, 1);
-
-	bool success = false;
-	DWORD read;
-
-	// Create buffer
-	TCHAR chBuff[BUFF_SIZE];
-	// Copy message to buffer
-	_tcscpy_s(chBuff, CA2T(someText.c_str()));
-
-	do
+	if (isConnected)
 	{
-		success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
-	} while (!success);
+		// if (!shouldUseNamedPipe)
+		//	return SQRESULT_NULL;
+		string someText = ServerSq_getstring(sqvm, 1);
+
+		bool success = false;
+		DWORD read;
+
+		// Create buffer
+		TCHAR chBuff[BUFF_SIZE];
+		// Copy message to buffer
+		_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+		do
+		{
+			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
+		} while (!success);
+	}
+	else
+	{
+		printf("NamedPipeClient: no pipe connected");
+	}
 
 	return SQRESULT_NULL;
 }
@@ -45,45 +79,83 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 SQRESULT SQ_StartNewMatch(void* sqvm)
 {
 	// if (!shouldUseNamedPipe)
-	//	return SQRESULT_NULL;
-	string someText = ServerSq_getstring(sqvm, 1);
-	someText.append("|").append(Cvar_ns_server_name->GetString());
-
-	bool success = false;
-	DWORD read;
-
-	// Create buffer
-	TCHAR chBuff[BUFF_SIZE];
-	// Copy message to buffer
-	_tcscpy_s(chBuff, CA2T(someText.c_str()));
-
-	do
+	//	return;
+	hPipe = GetNewPipeInstance();
+	if (hPipe == INVALID_HANDLE_VALUE)
 	{
-		success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
-	} while (!success);
+		printf("Invalid");
+	}
+	else
+	{
+		printf("Fine");
+	}
+	isConnected = hPipe != INVALID_HANDLE_VALUE;
+	cout << hPipe << endl;
+
+	if (isConnected)
+	{
+		// if (!shouldUseNamedPipe)
+		//	return SQRESULT_NULL;
+		string someText = ServerSq_getstring(sqvm, 1);
+		someText.append("|").append(Cvar_ns_server_name->GetString());
+
+		bool success = false;
+		DWORD read;
+
+		// Create buffer
+		TCHAR chBuff[BUFF_SIZE];
+		// Copy message to buffer
+		_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+		do
+		{
+			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
+		} while (!success);
+	}
+	else
+	{
+		cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
+	}
 
 	return SQRESULT_NULL;
 }
 
-//void InitialiseNamedPipeClient()
+SQRESULT SQ_EndMatch(void* sqvm)
+{
+	if (isConnected)
+	{
+		// if (!shouldUseNamedPipe)
+		//	return SQRESULT_NULL;
+		string someText = ServerSq_getstring(sqvm, 1);
+		someText.append("|").append(Cvar_ns_server_name->GetString());
+
+		bool success = false;
+		DWORD read;
+
+		// Create buffer
+		TCHAR chBuff[BUFF_SIZE];
+		// Copy message to buffer
+		_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+		do
+		{
+			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
+		} while (!success);
+
+		isConnected = false;
+		CloseHandle(hPipe);
+	}
+
+	return SQRESULT_NULL;
+}
+
+// void InitialiseNamedPipeClient()
 void InitialiseNamedPipeClient(HMODULE baseAddress)
 {
 	// NamedPipe sending functions
-	g_ServerSquirrelManager->AddFuncRegistration(
-		"void", "NSSendToNamedPipe", "string textToSend", "", SQ_SendToNamedPipe);
+	g_ServerSquirrelManager->AddFuncRegistration("void", "NSSendToNamedPipe", "string textToSend", "", SQ_SendToNamedPipe);
 	// TODO: Check for commandId and send additional stuff based on that
-	g_ServerSquirrelManager->AddFuncRegistration(
-		"void", "NSStartNewMatch", "string textToSend", "", SQ_StartNewMatch);
-
-	//if (!shouldUseNamedPipe)
-	//	return;
-	hPipe = CreateFile(PIPE_NAME, GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
-
-	if (hPipe == INVALID_HANDLE_VALUE)
-	{
-		cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
-		return;
-	}
-
-	cout << hPipe << endl;
+	g_ServerSquirrelManager->AddFuncRegistration("void", "NSStartNewMatch", "string textToSend", "", SQ_StartNewMatch);
+	// End pipe
+	g_ServerSquirrelManager->AddFuncRegistration("void", "NSEndMatch", "string textToSend", "", SQ_EndMatch);
 }
