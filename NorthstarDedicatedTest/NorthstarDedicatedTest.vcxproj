@@ -107,7 +107,9 @@
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>cd $(TargetDir)
-copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"</Command>
+copy /y $(TargetFileName) "C:\Program Files (x86)\Origin_EA_Games\Titanfall2"
+copy /y $(TargetFileName) "C:\git\R2Northstar-MapSystem\Other"
+copy /y "C:\Program Files (x86)\Origin_EA_Games\Titanfall2\R2Northstar\mods\Interstellar.MapSystem\mod\scripts\vscripts\_MapSystem.gnut" "C:\git\R2Northstar-MapSystem\Other"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -16,8 +16,8 @@
 using namespace std;
 
 #define GENERAL_PIPE_NAME TEXT("\\\\.\\pipe\\GameDataPipe")
-//#define SPECIFIC_PIPE_PRENAME "\\\\.\\pipe\\"
 #define BUFF_SIZE 512
+#define CLOSE_PIPE_ON_MATCHEND true
 
 HANDLE hPipe;
 bool isConnected = false;
@@ -40,6 +40,7 @@ HANDLE GetNewPipeInstance()
 		{
 			do
 			{
+				printf("New Pipe connection");
 				thisMatchPipe = CreateFile(chBuf, GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 			} while (thisMatchPipe == INVALID_HANDLE_VALUE);
 		}
@@ -79,18 +80,37 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 SQRESULT SQ_StartNewMatch(void* sqvm)
 {
 	// if (!shouldUseNamedPipe)
-	//	return;
-	hPipe = GetNewPipeInstance();
-	if (hPipe == INVALID_HANDLE_VALUE)
+	// return;
+	// if (!isConnected || hPipe == INVALID_HANDLE_VALUE)
+	try
 	{
-		printf("Invalid");
+		if (isConnected && hPipe != INVALID_HANDLE_VALUE)
+		{
+			string someText = "|2"; // End match
+			// someText.append("|").append(Cvar_ns_server_name->GetString());
+
+			bool success = false;
+			DWORD read;
+
+			// Create buffer
+			TCHAR chBuff[BUFF_SIZE];
+			// Copy message to buffer
+			_tcscpy_s(chBuff, CA2T(someText.c_str()));
+		}
+		else
+		{
+			//isConnected = false;
+			hPipe = GetNewPipeInstance();
+		}
 	}
-	else
+	catch (exception _e)
 	{
-		printf("Fine");
+		isConnected = false;
+		printf(_e.what());
+		hPipe = GetNewPipeInstance();
 	}
+	//hPipe = GetNewPipeInstance();
 	isConnected = hPipe != INVALID_HANDLE_VALUE;
-	cout << hPipe << endl;
 
 	if (isConnected)
 	{
@@ -142,8 +162,11 @@ SQRESULT SQ_EndMatch(void* sqvm)
 			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
 		} while (!success);
 
-		isConnected = false;
-		CloseHandle(hPipe);
+		if (CLOSE_PIPE_ON_MATCHEND)
+		{
+			isConnected = false;
+			CloseHandle(hPipe);
+		}
 	}
 
 	return SQRESULT_NULL;
