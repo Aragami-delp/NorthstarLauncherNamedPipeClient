@@ -50,28 +50,30 @@ HANDLE GetNewPipeInstance()
 
 SQRESULT SQ_SendToNamedPipe(void* sqvm)
 {
-	if (isConnected)
+	try
 	{
-		// if (!shouldUseNamedPipe)
-		//	return SQRESULT_NULL;
-		string someText = ServerSq_getstring(sqvm, 1);
-
-		bool success = false;
-		DWORD read;
-
-		// Create buffer
-		TCHAR chBuff[BUFF_SIZE];
-		// Copy message to buffer
-		_tcscpy_s(chBuff, CA2T(someText.c_str()));
-
-		do
+		if (isConnected)
 		{
-			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
-		} while (!success);
+			// if (!shouldUseNamedPipe)
+			//	return SQRESULT_NULL;
+			string someText = ServerSq_getstring(sqvm, 1);
+
+			bool success = false;
+
+			do
+			{
+				success = WriteFile(hPipe, someText.c_str(), someText.length(), &read, nullptr);
+			} while (!success);
+		}
+		else
+		{
+			printf("NamedPipeClient: no pipe connected");
+		}
 	}
-	else
+	catch (exception _e)
 	{
-		printf("NamedPipeClient: no pipe connected");
+		printf("C++ ERROR: 1----------------------------------------");
+		printf(_e.what());
 	}
 
 	return SQRESULT_NULL;
@@ -79,15 +81,47 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 
 SQRESULT SQ_StartNewMatch(void* sqvm)
 {
-	// if (!shouldUseNamedPipe)
-	// return;
-	// if (!isConnected || hPipe == INVALID_HANDLE_VALUE)
 	try
 	{
-		if (isConnected && hPipe != INVALID_HANDLE_VALUE)
+		// if (!shouldUseNamedPipe)
+		// return;
+		// if (!isConnected || hPipe == INVALID_HANDLE_VALUE)
+		try
 		{
-			string someText = "|2"; // End match
-			// someText.append("|").append(Cvar_ns_server_name->GetString());
+			if (isConnected && hPipe != INVALID_HANDLE_VALUE)
+			{
+				string someText = "|2"; // End match
+				// someText.append("|").append(Cvar_ns_server_name->GetString());
+
+				bool success = false;
+				DWORD read;
+
+				// Create buffer
+				TCHAR chBuff[BUFF_SIZE];
+				// Copy message to buffer
+				_tcscpy_s(chBuff, CA2T(someText.c_str()));
+			}
+			else
+			{
+				// isConnected = false;
+				hPipe = GetNewPipeInstance();
+			}
+		}
+		catch (exception _e)
+		{
+			isConnected = false;
+			printf(_e.what());
+			hPipe = GetNewPipeInstance();
+		}
+		// hPipe = GetNewPipeInstance();
+		isConnected = hPipe != INVALID_HANDLE_VALUE;
+
+		if (isConnected)
+		{
+			// if (!shouldUseNamedPipe)
+			//	return SQRESULT_NULL;
+			string someText = ServerSq_getstring(sqvm, 1);
+			someText.append("|").append(Cvar_ns_server_name->GetString());
 
 			bool success = false;
 			DWORD read;
@@ -96,45 +130,21 @@ SQRESULT SQ_StartNewMatch(void* sqvm)
 			TCHAR chBuff[BUFF_SIZE];
 			// Copy message to buffer
 			_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+			do
+			{
+				success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
+			} while (!success);
 		}
 		else
 		{
-			//isConnected = false;
-			hPipe = GetNewPipeInstance();
+			cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
 		}
 	}
 	catch (exception _e)
 	{
-		isConnected = false;
+		printf("C++ ERROR: 2----------------------------------------");
 		printf(_e.what());
-		hPipe = GetNewPipeInstance();
-	}
-	//hPipe = GetNewPipeInstance();
-	isConnected = hPipe != INVALID_HANDLE_VALUE;
-
-	if (isConnected)
-	{
-		// if (!shouldUseNamedPipe)
-		//	return SQRESULT_NULL;
-		string someText = ServerSq_getstring(sqvm, 1);
-		someText.append("|").append(Cvar_ns_server_name->GetString());
-
-		bool success = false;
-		DWORD read;
-
-		// Create buffer
-		TCHAR chBuff[BUFF_SIZE];
-		// Copy message to buffer
-		_tcscpy_s(chBuff, CA2T(someText.c_str()));
-
-		do
-		{
-			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
-		} while (!success);
-	}
-	else
-	{
-		cout << "INVALID_HANDLE_VALUE" << GetLastError() << endl;
 	}
 
 	return SQRESULT_NULL;
@@ -142,31 +152,39 @@ SQRESULT SQ_StartNewMatch(void* sqvm)
 
 SQRESULT SQ_EndMatch(void* sqvm)
 {
-	if (isConnected)
+	try
 	{
-		// if (!shouldUseNamedPipe)
-		//	return SQRESULT_NULL;
-		string someText = ServerSq_getstring(sqvm, 1);
-		someText.append("|").append(Cvar_ns_server_name->GetString());
-
-		bool success = false;
-		DWORD read;
-
-		// Create buffer
-		TCHAR chBuff[BUFF_SIZE];
-		// Copy message to buffer
-		_tcscpy_s(chBuff, CA2T(someText.c_str()));
-
-		do
+		if (isConnected)
 		{
-			success = WriteFile(hPipe, chBuff, BUFF_SIZE * sizeof(TCHAR), &read, nullptr);
-		} while (!success);
+			// if (!shouldUseNamedPipe)
+			//	return SQRESULT_NULL;
+			string someText = ServerSq_getstring(sqvm, 1);
+			someText.append("|").append(Cvar_ns_server_name->GetString());
 
-		if (CLOSE_PIPE_ON_MATCHEND)
-		{
-			isConnected = false;
-			CloseHandle(hPipe);
+			bool success = false;
+			DWORD read;
+
+			// Create buffer
+			TCHAR chBuff[BUFF_SIZE];
+			// Copy message to buffer
+			_tcscpy_s(chBuff, CA2T(someText.c_str()));
+
+			do
+			{
+				success = WriteFile(hPipe, someText.c_str(), someText.length(), &read, nullptr);
+			} while (!success);
+
+			if (CLOSE_PIPE_ON_MATCHEND)
+			{
+				isConnected = false;
+				CloseHandle(hPipe);
+			}
 		}
+	}
+	catch (exception _e)
+	{
+		printf("C++ ERROR: 2----------------------------------------");
+		printf(_e.what());
 	}
 
 	return SQRESULT_NULL;
