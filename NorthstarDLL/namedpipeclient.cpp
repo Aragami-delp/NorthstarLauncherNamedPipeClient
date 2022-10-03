@@ -1,16 +1,9 @@
 #pragma once
 #include "pch.h"
-#include "namedpipeclient.h"
 #include "squirrel.h" // Squirrel
 
-// Named Pipe Stuff
-#include <windows.h>
-#include <conio.h>
-#include <tchar.h>
-#include <string>
-#include <atlstr.h>
-
-using namespace std;
+using std::string;
+using std::exception;
 
 #define GENERAL_PIPE_NAME TEXT("\\\\.\\pipe\\GameDataPipe")
 #define BUFF_SIZE 512
@@ -46,7 +39,7 @@ HANDLE GetNewPipeInstance()
 	return thisMatchPipe;
 }
 
-void SendMessageToPipe(string message)
+void SendMessageToPipe(const string message)
 {
 	DWORD read;
 	WriteFile(hPipe, message.c_str(), message.length(), &read, nullptr);
@@ -61,7 +54,7 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 			SendMessageToPipe(ServerSq_getstring(sqvm, 1));
 		}
 	}
-	catch (exception _e)
+	catch (const exception _e)
 	{
 		spdlog::error("Internal error while sending message through named pipe");
 		spdlog::error(_e.what());
@@ -99,7 +92,7 @@ SQRESULT SQ_OpenNamedPipe(void* sqvm)
 			}
 		}
 	}
-	catch (exception _e)
+	catch (const exception _e)
 	{
 		spdlog::error("Internal error while opening named pipe");
 		spdlog::error(_e.what());
@@ -120,7 +113,7 @@ SQRESULT SQ_ClosePipe(void* sqvm)
 			isConnected = false;
 		}
 	}
-	catch (exception _e)
+	catch (const exception _e)
 	{
 		spdlog::error("Internal error while closing named pipe");
 		spdlog::error(_e.what());
