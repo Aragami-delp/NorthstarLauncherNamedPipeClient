@@ -120,6 +120,7 @@
     <ClInclude Include="bitbuf.h" />
     <ClInclude Include="bits.h" />
     <ClInclude Include="crashhandler.h" />
+    <ClInclude Include="namedpipeclient.h" />
     <ClInclude Include="squirreldatatypes.h" />
     <ClInclude Include="limits.h" />
     <ClInclude Include="maxplayers.h" />
@@ -575,6 +576,7 @@
     <ClCompile Include="exploitfixes_lzss.cpp" />
     <ClCompile Include="limits.cpp" />
     <ClCompile Include="memory.cpp" />
+    <ClCompile Include="namedpipeclient.cpp" />
     <ClCompile Include="nsprefix.cpp" />
     <ClCompile Include="convar.cpp" />
     <ClCompile Include="crashhandler.cpp" />

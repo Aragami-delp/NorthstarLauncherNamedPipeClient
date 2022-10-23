@@ -1,5 +1,7 @@
 #pragma once
 #include "pch.h"
+
+#include "convar.h"
 #include "squirrel.h" // Squirrel
 
 using std::string;
@@ -45,13 +47,13 @@ void SendMessageToPipe(const string message)
 	WriteFile(hPipe, message.c_str(), message.length(), &read, nullptr);
 }
 
-SQRESULT SQ_SendToNamedPipe(void* sqvm)
+SQRESULT SQ_SendToNamedPipe(HSquirrelVM* sqvm)
 {
 	try
 	{
 		if (Cvar_ns_enable_named_pipe->GetInt() && isConnected)
 		{
-			SendMessageToPipe(ServerSq_getstring(sqvm, 1));
+			SendMessageToPipe(g_pSquirrel<ScriptContext::SERVER>->getstring(sqvm, 1));
 		}
 	}
 	catch (const exception _e)
@@ -63,7 +65,7 @@ SQRESULT SQ_SendToNamedPipe(void* sqvm)
 	return SQRESULT_NULL;
 }
 
-SQRESULT SQ_OpenNamedPipe(void* sqvm)
+SQRESULT SQ_OpenNamedPipe(HSquirrelVM* sqvm)
 {
 	try
 	{
@@ -76,14 +78,14 @@ SQRESULT SQ_OpenNamedPipe(void* sqvm)
 			}
 			else
 			{
-				SendMessageToPipe(ServerSq_getstring(sqvm, 2));
+				SendMessageToPipe(g_pSquirrel<ScriptContext::SERVER>->getstring(sqvm, 2));
 			}
 
 			isConnected = hPipe != INVALID_HANDLE_VALUE;
 
 			if (isConnected)
 			{
-				SendMessageToPipe(ServerSq_getstring(sqvm, 1));
+				SendMessageToPipe(g_pSquirrel<ScriptContext::SERVER>->getstring(sqvm, 1));
 			}
 			else
 			{
@@ -101,13 +103,13 @@ SQRESULT SQ_OpenNamedPipe(void* sqvm)
 	return SQRESULT_NULL;
 }
 
-SQRESULT SQ_ClosePipe(void* sqvm)
+SQRESULT SQ_ClosePipe(HSquirrelVM* sqvm)
 {
 	try
 	{
 		if (Cvar_ns_enable_named_pipe->GetInt() && isConnected)
 		{
-			SendMessageToPipe(ServerSq_getstring(sqvm, 1));
+			SendMessageToPipe(g_pSquirrel<ScriptContext::SERVER>->getstring(sqvm, 1));
 
 			CloseHandle(hPipe);
 			isConnected = false;
@@ -122,12 +124,16 @@ SQRESULT SQ_ClosePipe(void* sqvm)
 	return SQRESULT_NULL;
 }
 
-void InitialiseNamedPipeClient(HMODULE baseAddress)
+
+ON_DLL_LOAD_RELIESON("server.dll", NamedPipeClientCallBack, (ServerSquirrel, ClientSquirrel), (CModule module))
 {
-	Cvar_ns_enable_named_pipe =
-		new ConVar("ns_enable_named_pipe", "0", FCVAR_GAMEDLL, "Whether to start up a named pipe server on request from squirrel");
-	g_ServerSquirrelManager->AddFuncRegistration("void", "NSSendToNamedPipe", "string textToSend", "", SQ_SendToNamedPipe);
-	g_ServerSquirrelManager->AddFuncRegistration(
-		"void", "NSOpenNamedPipe", "string openingMessage, string closingMessageIfOpen", "", SQ_OpenNamedPipe);
-	g_ServerSquirrelManager->AddFuncRegistration("void", "NSCloseNamedPipe", "string closingMessage", "", SQ_ClosePipe);
+	g_pSquirrel<ScriptContext::SERVER>->AddFuncRegistration("void", "NSSendToNamedPipe", "string textToSend", "", SQ_SendToNamedPipe);
+	g_pSquirrel<ScriptContext::SERVER>->AddFuncRegistration("void", "NSOpenNamedPipe", "string openingMessage, string closingMessageIfOpen", "", SQ_OpenNamedPipe);
+	g_pSquirrel<ScriptContext::SERVER>->AddFuncRegistration("void", "NSCloseNamedPipe", "string closingMessage", "", SQ_ClosePipe);
+
+}
+
+ON_DLL_LOAD_RELIESON("server.dll", NamedPipeClientConvVar, ConVar, (CModule module))
+{
+	Cvar_ns_enable_named_pipe = new ConVar("ns_enable_named_pipe", "0", FCVAR_GAMEDLL, "Whether to start up a named pipe server on request from squirrel");
 }
