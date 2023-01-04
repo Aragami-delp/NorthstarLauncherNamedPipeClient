@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
 
-#include "convar.h"
-#include "squirrel.h" // Squirrel
+#include "core/convar/convar.h"
+#include "squirrel/squirrel.h" // Squirrel
 
 using std::string;
 using std::exception;
